@@ -8,7 +8,11 @@ on:
 
 name: test-coverage
 
-permissions: read-all
+# FIX: 用 OIDC 免 token 上传（v4 不支持 tokenless），需 id-token: write；
+#      并保留 contents: read 供 covr 读取源码
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   test-coverage:
@@ -41,10 +45,10 @@ jobs:
       - uses: codecov/codecov-action@v4
         with:
           fail_ci_if_error: ${{ github.event_name != 'pull_request' && true || false }}
-          file: ./cobertura.xml
-          plugin: noop
+          files: ./cobertura.xml
           disable_search: true
-          token: ${{ secrets.CODECOV_TOKEN }}
+          use_oidc: true
+          verbose: true
 
       - name: Show testthat output
         if: always()

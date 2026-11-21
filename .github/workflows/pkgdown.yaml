@@ -11,6 +11,10 @@ on:
 
 name: pkgdown
 
+# FIX: deploy 步骤需要写权限才能推送 gh-pages 分支（原配置缺失，导致 git exit code 128）
+permissions:
+  contents: write
+
 jobs:
   pkgdown:
     runs-on: ubuntu-latest
