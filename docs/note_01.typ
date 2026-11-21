@@ -115,3 +115,34 @@ $ y_t = beta_0 + beta_1 (x_t - bar x) + sum_(j = 1)^k
 
 + `only.SSE = FALSE`：`coef`、`fitted`、`resi`、`SSE`；
 + `only.SSE = TRUE`：仅 `SSE`。
+
+= 操作步骤
+
+本次作业按以下步骤完成：
+
++ *克隆模板*：将 `https://github.com/rpkgs/rpkg_template` 克隆到本地，作为 R 包的骨架。
++ *添加函数*：从 `RHTests/R/Component.R` 获取四个函数（`RemoveSeasonal`、`LS_OneBreak`、`LS_MultiBreaks`、`lm_solve`），放入本包的 `R/Component.R`。
++ *编写文档*：使用 Typst 编写本笔记 `docs/note_01.typ`，并用 `typst compile` 编译为 PDF。
++ *编写测试*：在 `tests/testthat/test-Component.R` 中为四个函数编写单元测试，共 16 个断言，全部通过。
++ *生成 man 文档*：运行 `roxygen2::roxygenise()`，根据 roxygen2 注释生成 `NAMESPACE` 与 `man/*.Rd` 帮助文件。
++ *推送 GitHub*：将代码 push 到 `https://github.com/JinYiL506/hello.R`，触发 GitHub Actions 自动检查（`R-CMD-check`、`test-coverage`、`pkgdown`）。
+
+= 遇到的问题与解决
+
++ *VS Code 报 "Failed to get list of R functions"（缺少 jsonlite）*：
+  R 语言扩展依赖 `jsonlite` 包。由于 R 安装在 `C:/Program Files`（无写权限），
+  将包安装到用户目录 `~/Documents/R/win-library/4.6`，并设置环境变量
+  `R_LIBS_USER` 指向该目录，重启 VS Code 后解决。
+
++ *首次 push 后 GitHub Actions 检查失败*：
+  原因是 `NAMESPACE` 中没有任何 `export()` 声明，导致测试里的
+  `rpkg.template::LS_OneBreak()` 找不到导出函数。通过运行
+  `roxygen2::roxygenise()` 重新生成 `NAMESPACE`（加入 `export(LS_OneBreak)`）
+  和 `man/` 文档，再次 push 后检查恢复通过。
+
++ *本地库路径问题*：
+  R 的默认库路径只有系统目录，用户目录未纳入。安装依赖后需设置
+  `R_LIBS_USER` 环境变量，R 才能找到 `testthat`、`magrittr` 等包。
+
++ *LF/CRLF 换行警告*：
+  Git 提交时提示换行符转换，属 Windows 平台正常现象，不影响结果。
